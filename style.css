@@ -212,25 +212,24 @@ main {
     position: absolute;
     z-index: 10;
     border-radius: 50%;
-    transition: transform 8s cubic-bezier(0.15, 0, 0.15, 1);
-    
-    /* --- CALIBRACIÓN DE TAMAÑO --- */
-    /* La cubierta es gruesa, así que la ruleta debe ser más chica (aprox 64% del total) */
+
+    /* Transición corta por defecto (solo para el giro lento) */
+    transition: transform 0.05s linear;
+
+    /* Tamaño calibrado */
     width: 64%; 
     height: 64%;
     
-    /* --- CENTRADO --- */
-    /* Fórmula: (100% - Ancho%) / 2 = Posición */
-    /* (100 - 64) / 2 = 18% */
     top: 18%;
     left: 18%;
-        /* ⭐ BORDE DORADO DE LA RULETA ⭐ */
-    box-shadow:
-        0 0 0 20px #d4af37,              /* borde dorado */
-        0 0 80px rgba(212,175,55,0.6),  /* halo dorado */
-        0 0 60px rgba(212,175,55,0.4);  /* brillo externo */
 
+    /* Borde dorado */
+    box-shadow:
+        0 0 0 20px #d4af37,
+        0 0 80px rgba(212,175,55,0.6),
+        0 0 60px rgba(212,175,55,0.4);
 }
+
 
 /* Capa 2: Neumático (Overlay CSS Puro - Muy Realista) */
 /* === CAPA 2: NEUMÁTICO REALISTA (Overlay CSS Puro) === */

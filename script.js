@@ -17,6 +17,8 @@ let participants = ["Participante 1", "Participante 2", "Participante 3", "Parti
 let winners = [];
 let isSpinning = false;
 let currentRotation = 0;
+let idleRotation = 0;
+let idleInterval = null;
 
 // === AL CARGAR LA PÁGINA ===
 window.onload = () => {
@@ -53,7 +55,7 @@ function handleFileUpload(input) {
         const lines = text.split(/\r\n|\n/);
         
         let countAdded = 0;
-        let duplicatesList = []; 
+        let duplicatesMap = {};
 
         lines.forEach(line => {
             const cleanLine = line.trim();
@@ -65,7 +67,7 @@ function handleFileUpload(input) {
                             participants.push(finalName);
                             countAdded++;
                         } else {
-                            duplicatesList.push(finalName);
+                            duplicatesMap[finalName] = (duplicatesMap[finalName] || 0) + 1;
                         }
                     }
                 };
@@ -85,9 +87,9 @@ function handleFileUpload(input) {
             updateCounter();
         }
 
-        if (duplicatesList.length > 0) {
-            showDupesModal(countAdded, duplicatesList);
-        } else if (countAdded > 0) {
+        if (Object.keys(duplicatesMap).length > 0) {
+            showDupesModal(countAdded, duplicatesMap);
+        }else if (countAdded > 0) {
             alert(`✅ Éxito: Se agregaron ${countAdded} participantes nuevos.`);
         } else {
             alert("⚠️ No se agregaron participantes.");
@@ -217,44 +219,83 @@ function spinWheel() {
     }
 
     isSpinning = true;
+
     const spinBtn = document.getElementById('spinBtn');
     if(spinBtn) {
         spinBtn.disabled = true;
-        spinBtn.style.opacity = 0.7; // Opacidad visual
+        spinBtn.style.opacity = 0.7;
         spinBtn.style.cursor = 'not-allowed';
     }
 
-    // Cálculo de vueltas
-    const extraSpins = 360 * 8; // 8 vueltas rápidas
-    const randomStop = Math.floor(Math.random() * 360); 
-    const totalDegrees = extraSpins + randomStop; 
+    // Detener la rotación lenta mientras gira fuerte
+    const wheel = document.getElementById('wheelCanvas');
+    wheel.style.transition = ""; // limpiar transición del idle
+    wheel.style.transform = `rotate(${idleRotation}deg)`; // fijar posición actual
+
+    // == CÁLCULO DE VUELTAS ==
+    const extraSpins = 360 * 8; 
+    const randomStop = Math.floor(Math.random() * 360);
+    const totalDegrees = extraSpins + randomStop;
     const newRotation = currentRotation + totalDegrees;
 
-    // Giramos el CANVAS
-    canvas.style.transition = "transform 8s cubic-bezier(0.15, 0, 0.15, 1)"; // Curva de aceleración realista
-    canvas.style.transform = `rotate(-${newRotation}deg)`;
+    // == GIRO FUERTE ==
+    wheel.style.transition = "transform 8s cubic-bezier(0.15, 0, 0.15, 1)";
+    wheel.style.transform = `rotate(-${newRotation}deg)`; 
 
-    // Tiempo de espera (8 segundos)
+    // == FINALIZAR GIRO ==
     setTimeout(() => {
         isSpinning = false;
         currentRotation = newRotation;
+
         if(spinBtn) {
             spinBtn.disabled = false;
             spinBtn.style.opacity = 1;
             spinBtn.style.cursor = 'pointer';
         }
-        
-        // Cálculo matemático del ganador (considerando la flecha arriba)
+
+        // == CALCULAR GANADOR ==
         const actualRotation = newRotation % 360;
         const sliceDeg = 360 / participants.length;
-        // La flecha está en 270 grados (arriba)
         let index = Math.floor(((360 - actualRotation + 270) % 360) / sliceDeg);
         index = index % participants.length;
 
         showWinner(participants[index]);
 
-    }, 8000); // 8000ms = 8s
+        // REANUDAR GIRO LENTO
+        startIdleRotation();
+
+    }, 8000); 
 }
+
+
+function startIdleRotation() {
+    const wheel = document.getElementById('wheelCanvas');
+
+    if (idleInterval) return; // evitar duplicar intervalos
+
+    idleInterval = setInterval(() => {
+        if (!isSpinning) {  
+            idleRotation = (idleRotation + 0.12) % 360; // velocidad (podés subirla o bajarla)
+            wheel.style.transform = `rotate(${idleRotation}deg)`;
+        }
+    }, 20); // suavidad ultra fluida
+}
+
+
+function startIdleRotation() {
+    const wheel = document.getElementById('wheelCanvas');
+
+    // Si ya está girando en idle, no volver a iniciar
+    if (idleInterval) return;
+
+    idleInterval = setInterval(() => {
+        if (!isSpinning) {  
+            idleRotation = (idleRotation + 0.15) % 360; // velocidad lenta (ajustar si querés)
+            wheel.style.transform = `rotate(${idleRotation}deg)`;
+        }
+    }, 20); // suavidad del giro
+}
+
 
 // === 6. MODAL Y FESTEJO ===
 function showWinner(name) {
@@ -321,20 +362,35 @@ function autoResizeWinners() {
 }
 
 // Modal Duplicados
-function showDupesModal(addedCount, dupesArray) {
+function showDupesModal(addedCount, dupesMap) {
     const modal = document.getElementById('dupesModal');
     const summary = document.getElementById('dupesSummary');
     const list = document.getElementById('dupesList');
 
-    summary.innerHTML = `✅ Se agregaron <b>${addedCount}</b> nuevos.<br>⛔ Se detectaron <b>${dupesArray.length}</b> repetidos.`;
-    list.innerHTML = ''; 
-    dupesArray.forEach(name => {
+    // Resumen elegante
+    summary.innerHTML = `
+        <span class="text-green-400">✔ Se agregaron ${addedCount} participantes nuevos.</span><br>
+        <span class="text-red-400">✖ Se encontraron ${Object.keys(dupesMap).length} nombres repetidos.</span>
+    `;
+
+    // Limpiar lista
+    list.innerHTML = '';
+
+    // Crear UI de repetidos agrupados
+    Object.entries(dupesMap).forEach(([name, count]) => {
         const li = document.createElement('li');
-        li.innerText = `• ${name}`;
+
+        li.innerHTML = `
+            <span class="font-bold text-yellow-300">${name}</span>
+            <span class="text-gray-400"> — ${count} ${count > 1 ? 'veces' : 'vez'}</span>
+        `;
+
         list.appendChild(li);
     });
+
     modal.style.display = 'flex';
 }
+
 
 function closeDupesModal() {
     document.getElementById('dupesModal').style.display = 'none';
@@ -361,3 +417,5 @@ function exportPDF() {
     });
     doc.save("ganadores_corven.pdf");
 }
+
+window.addEventListener('DOMContentLoaded', startIdleRotation);

@@ -41,7 +41,26 @@
             </div>
         </div>
     </div>
+         <!-- MODAL: PARTICIPANTES DUPLICADOS -->
+    <div id="dupesModal" class="modal">
+        <div class="modal-content">
+            <h2>⚠️ Participantes repetidos</h2>
 
+            <div class="dupes-container">
+                <p id="dupesSummary"></p>
+
+                <ul id="dupesList" class="dupe-list">
+                    <!-- Acá JS inyecta los nombres repetidos -->
+                </ul>
+            </div>
+
+            <div class="modal-actions">
+                <button onclick="closeDupesModal()">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
     <section class="center-stage">
         <div class="wheel-assembly">
             <div class="pointer"></div>
