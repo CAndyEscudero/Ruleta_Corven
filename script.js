@@ -13,7 +13,7 @@ const colors = {
 };
 
 // Variables de Estado
-let participants = ["Participante 1", "Participante 2", "Participante 3", "Participante 4"]; 
+let participants = []; 
 let winners = [];
 let isSpinning = false;
 let currentRotation = 0;
@@ -214,73 +214,127 @@ function drawWheel() {
 // === 5. GIRO Y GANADOR ===
 function spinWheel() {
     if (isSpinning || participants.length < 2) {
-        if(participants.length < 2) alert("¡Necesitas al menos 2 participantes!");
+        if (participants.length < 2) alert("¡Necesitas al menos 2 participantes!");
         return;
     }
 
     isSpinning = true;
 
     const spinBtn = document.getElementById('spinBtn');
-    if(spinBtn) {
+    if (spinBtn) {
         spinBtn.disabled = true;
         spinBtn.style.opacity = 0.7;
         spinBtn.style.cursor = 'not-allowed';
     }
 
-    // Detener la rotación lenta mientras gira fuerte
+    // Detener rotación lenta
     const wheel = document.getElementById('wheelCanvas');
-    wheel.style.transition = ""; // limpiar transición del idle
-    wheel.style.transform = `rotate(${idleRotation}deg)`; // fijar posición actual
+    wheel.style.transition = "";
+    wheel.style.transform = `rotate(${idleRotation}deg)`;
 
-    // == CÁLCULO DE VUELTAS ==
-    const extraSpins = 360 * 8; 
-    const randomStop = Math.floor(Math.random() * 360);
-    const totalDegrees = extraSpins + randomStop;
-    const newRotation = currentRotation + totalDegrees;
+    // ================================
+    //   ETAPA 1: Giro rápido (6.5s)
+    // ================================
+    const fastSpins = 360 * 10;  // muchas vueltas
+    const fastRotation = currentRotation + fastSpins;
 
-    // == GIRO FUERTE ==
-    wheel.style.transition = "transform 8s cubic-bezier(0.15, 0, 0.15, 1)";
-    wheel.style.transform = `rotate(-${newRotation}deg)`; 
+    wheel.style.transition = "transform 6.5s cubic-bezier(0.05, 0.7, 0.1, 1)";
+    wheel.style.transform = `rotate(-${fastRotation}deg)`;
 
-    // == FINALIZAR GIRO ==
+    // ================================
+    //   ETAPA 2: Frenado suave (3.5s)
+    // ================================
     setTimeout(() => {
-        isSpinning = false;
-        currentRotation = newRotation;
+        const randomStop = Math.floor(Math.random() * 360);
+        const finalRotation = fastRotation + randomStop;
 
-        if(spinBtn) {
-            spinBtn.disabled = false;
-            spinBtn.style.opacity = 1;
-            spinBtn.style.cursor = 'pointer';
+        // Activar zoom final
+        wheel.classList.add("zoom-wheel-final");
+
+        wheel.style.transition = "transform 3.5s cubic-bezier(0.3, 0, 0.15, 1)";
+        wheel.style.transform = `rotate(-${finalRotation}deg)`;
+
+        // === ACTIVAR VISOR FINAL ===
+        const viewer = document.getElementById("finalViewer");
+        const vPrev = document.getElementById("viewer-prev");
+        const vCurrent = document.getElementById("viewer-current");
+        const vNext = document.getElementById("viewer-next");
+
+        // mostrar caja
+        viewer.style.opacity = 1;
+
+        // función: obtener ángulo REAL de la ruleta
+        function getWheelAngle() {
+            const tr = getComputedStyle(wheel).transform;
+            if (tr === "none") return 0;
+
+            const values = tr.split('(')[1].split(')')[0].split(',');
+            const a = parseFloat(values[0]);
+            const b = parseFloat(values[1]);
+
+            let angle = Math.atan2(b, a) * (180 / Math.PI);
+            return angle < 0 ? angle + 360 : angle;
         }
 
-        // == CALCULAR GANADOR ==
-        const actualRotation = newRotation % 360;
+        // actualizar nombres durante los 3.5s de frenado
+        let tracking = setInterval(() => {
+
+            const angle = getWheelAngle();
+            const sliceDeg = 360 / participants.length;
+
+            let index = Math.floor(((360 - angle + 270) % 360) / sliceDeg);
+            index = (index + participants.length) % participants.length;
+
+            const prev = participants[(index - 1 + participants.length) % participants.length];
+            const curr = participants[index];
+            const next = participants[(index + 1) % participants.length];
+
+            vPrev.textContent = prev || "";
+            vCurrent.textContent = curr || "";
+            vNext.textContent = next || "";
+
+            // efecto de zoom pulsante sobre el participante actual
+            vCurrent.classList.add("viewer-zoom");
+            setTimeout(() => vCurrent.classList.remove("viewer-zoom"), 200);
+
+        }, 90);
+
+        // ocultar visor al terminar el frenado
+        setTimeout(() => {
+            clearInterval(tracking);
+            viewer.style.opacity = 0;
+        }, 3500);
+
+
+        // Final total después de 10s
+        setTimeout(() => {
+            wheel.classList.remove("zoom-wheel-final");
+
+            isSpinning = false;
+            currentRotation = finalRotation;
+
+            if (spinBtn) {
+                spinBtn.disabled = false;
+                spinBtn.style.opacity = 1;
+                spinBtn.style.cursor = 'pointer';
+            }
+
+           // === CALCULAR GANADOR (200ms después de apagar visor) ===
+        setTimeout(() => {
+        const actualRotation = finalRotation % 360;
         const sliceDeg = 360 / participants.length;
+
         let index = Math.floor(((360 - actualRotation + 270) % 360) / sliceDeg);
         index = index % participants.length;
 
         showWinner(participants[index]);
+    }, 1000);
 
-        // REANUDAR GIRO LENTO
-        startIdleRotation();
 
-    }, 8000); 
+        }, 200); // <-- duración del frenado
+
+    }, 7500); // <-- duración del giro rápido (7.5s)
 }
-
-
-function startIdleRotation() {
-    const wheel = document.getElementById('wheelCanvas');
-
-    if (idleInterval) return; // evitar duplicar intervalos
-
-    idleInterval = setInterval(() => {
-        if (!isSpinning) {  
-            idleRotation = (idleRotation + 0.12) % 360; // velocidad (podés subirla o bajarla)
-            wheel.style.transform = `rotate(${idleRotation}deg)`;
-        }
-    }, 20); // suavidad ultra fluida
-}
-
 
 function startIdleRotation() {
     const wheel = document.getElementById('wheelCanvas');

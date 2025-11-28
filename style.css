@@ -187,7 +187,63 @@ main {
     z-index: 1;
     pointer-events: none;
 }
+.zoom-wheel-final {
+    transform: scale(1.12) !important;
+    transition: transform 0.4s ease-out;
+}
+/* === VISOR FINAL DE PARTICIPANTES === */
 
+.final-viewer {
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 320px;
+
+    background: rgba(0,0,0,0.65);
+    padding: 20px;
+    border-radius: 16px;
+    border: 2px solid var(--corven-gold);
+
+    box-shadow: 0 0 25px rgba(212,175,55,0.35);
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease-out;
+}
+
+.viewer-item {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: white;
+}
+
+.viewer-item.small {
+    color: #ffaa62;
+    font-size: 16px;
+    opacity: 0.7;
+    margin: 3px 0;
+}
+
+.viewer-item.current {
+    font-size: 28px;
+    color: var(--corven-gold);
+    margin: 5px 0 10px 0;
+    text-shadow: 0 0 10px rgba(212,175,55,0.6);
+}
+
+.viewer-zoom {
+    font-size: 36px !important;
+    transform: scale(1.18);
+    text-shadow: 0 0 20px rgba(212,175,55,0.9);
+    transition: transform 0.25s ease-out, font-size 0.25s ease-out;
+}
 
 .tire-overlay-image {
     position: absolute;
