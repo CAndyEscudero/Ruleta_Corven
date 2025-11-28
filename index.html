@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteo Grupo Corven</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="background-fx"></div>
+
+    <header>
+        <div class="logo-container">
+            <span class="logo-icon">🦘</span>
+            <div class="logo-text">
+                <span class="logo-top">Grupo</span>
+                <span class="logo-main">CORVEN</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <input type="text" id="inputName" placeholder="Nombre...">
+            <button onclick="addParticipant()">Agregar</button>
+            <input type="file" id="fileInput" accept=".txt,.csv" style="display: none;" onchange="handleFileUpload(this)">
+            <button class="btn-import" onclick="document.getElementById('fileInput').click()">📂 Importar Lista</button>
+        </div>
+    </header>
+
+    <main>
+    <div class="floating-left">
+        <div class="counter-wrapper">
+            <h3>PARTICIPANTES</h3>
+            <div class="odometer-frame">
+                <div class="digit-box"><div class="number-strip" id="strip1"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div></div>
+                <div class="digit-box"><div class="number-strip" id="strip2"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div></div>
+                <div class="digit-box"><div class="number-strip" id="strip3"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div></div>
+                <div class="digit-box"><div class="number-strip" id="strip4"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div></div>
+                <div class="counter-badge">👥</div>
+            </div>
+        </div>
+    </div>
+
+    <section class="center-stage">
+        <div class="wheel-assembly">
+            <div class="pointer"></div>
+            
+            <div class="wheel-layers">
+                <canvas id="wheelCanvas" width="800" height="800"></canvas>
+                <img src="cubierta_dunlop.png" class="tire-overlay-image" alt="Cubierta Dunlop">
+                <div class="hub-cap">
+                    <img src="./logo.webp" alt="" class="hub-logo-img"> 
+                </div>
+            </div>
+
+            <div class="pedestal-shadow"></div>
+        </div>
+
+        <button id="spinBtn" class="spin-button-premium" onclick="spinWheel()">
+            <span class="btn-text">¡GIRAR!</span>
+            <div class="btn-shine"></div>
+        </button>
+    </section>
+
+    <section class="right-panel premium-panel">
+        <div class="winners-header">
+            <h3>GANADORES</h3>
+            <div class="odometer-frame mini-odometer">
+                <div class="digit-box"><div class="number-strip" id="winStrip1"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div></div>
+                <div class="digit-box"><div class="number-strip" id="winStrip2"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div></div>
+            </div>
+        </div>
+        <div class="winners-list" id="winnersList">
+            <div class="empty-state">Esperando resultado...</div>
+        </div>
+        <button class="btn-export" onclick="exportPDF()">🖨️ Exportar PDF</button>
+    </section>
+</main>
+
+    <div id="winnerModal" class="modal">
+        <div class="modal-content">
+            <h2>¡TENEMOS GANADOR!</h2>
+            <div class="winner-name" id="modalWinnerName">Nombre</div>
+            <div class="modal-actions">
+                <button onclick="closeModal(true)">Eliminar de la lista</button>
+                <button onclick="closeModal(false)" class="btn-secondary">Mantener</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>

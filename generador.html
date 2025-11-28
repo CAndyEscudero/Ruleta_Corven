@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Nombres</title>
+    <style>
+        body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+        button { background: #FF6600; color: white; border: none; padding: 20px 40px; font-size: 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #ff8533; }
+        p { margin-top: 20px; color: #888; }
+    </style>
+</head>
+<body>
+
+    <button onclick="generarYDescargar()">⬇️ Descargar participantes.txt (400)</button>
+    <p>Formato: Apellido Nombre</p>
+
+    <script>
+        function generarYDescargar() {
+            const nombres = ["Juan", "María", "Carlos", "Ana", "Pedro", "Lucía", "Jorge", "Sofía", "Miguel", "Laura", "Diego", "Valentina", "Luis", "Fernanda", "Gabriel", "Martina", "Andrés", "Camila", "Daniel", "Isabella", "Roberto", "Paula", "Javier", "Elena", "Francisco", "Marta", "Ricardo", "Clara", "Manuel", "Rosa", "Alejandro", "Adriana", "Héctor", "Gloria", "Sergio", "Alicia", "Oscar", "Beatriz", "Fernando", "Verónica", "Gustavo", "Natalia", "Esteban", "Carolina", "Lucas", "Gabriela", "Mariano", "Daniela", "Federico", "Silvia"];
+            
+            const apellidos = ["González", "Rodríguez", "Gómez", "Fernández", "López", "Díaz", "Martínez", "Pérez", "García", "Sánchez", "Romero", "Sosa", "Torres", "Álvarez", "Ruiz", "Ramírez", "Flores", "Benítez", "Acosta", "Medina", "Herrera", "Aguirre", "Pereyra", "Gutiérrez", "Giménez", "Molina", "Silva", "Castro", "Rojas", "Ortiz", "Núñez", "Luna", "Juárez", "Cabrera", "Ríos", "Ferreyra", "Morales", "Domínguez", "Moreno", "Peralta", "Vega", "Carrizo", "Quiroga", "Castillo", "Ledesma", "Ojeda", "Vera", "Muñoz", "Farías", "Paz"];
+
+            let contenido = "";
+            
+            // Generar 400 combinaciones
+            for (let i = 0; i < 400; i++) {
+                const nom = nombres[Math.floor(Math.random() * nombres.length)];
+                const ape = apellidos[Math.floor(Math.random() * apellidos.length)];
+                // Formato: Apellido Nombre
+                contenido += `${ape} ${nom}\n`;
+            }
+
+            // Crear el archivo Blob y descargarlo
+            const blob = new Blob([contenido], { type: "text/plain" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "participantes.txt";
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
