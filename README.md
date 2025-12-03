@@ -74,6 +74,7 @@ function sortear() {
     // 4. Iniciar secuencia de animación visual hacia el índice elegido
     animateOdometerToIndex(winnerIndex);
 }
+```
 
 📊 Lógica de Probabilidades, (Desactivado Visualmente)
 
