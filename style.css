@@ -1,0 +1,1490 @@
+/* ============================================
+   BLOQUE 1 – VARIABLES GLOBALES & BASE
+   ============================================ */
+
+:root {
+    --bg-color: #050505;
+    --corven-orange: #FF6600;
+    --corven-orange-dark: #cc5200;
+    --corven-gold: #D4AF37;
+    --text-white: #ffffff;
+    --tire-black: #151515;
+    --panel-bg: rgba(20, 20, 20, 0.7); /* Fondo cristal */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+html, body {
+    height: 100%;
+}
+
+/* Fondo general tipo escenario premium */
+body {
+    background:
+        /*url("/Ruleta_Corven/Fondo_pantalla_Grupo-Corven_1920x1080-01.png") left/80% no-repeat,*/
+        radial-gradient(circle at 50% 55%, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0) 60%),
+        radial-gradient(circle at 50% 120%, rgba(255,255,255,0.10) 0%, rgba(0,0,0,0) 70%),
+        radial-gradient(circle at 50% 50%, #262c36 0%, #0d0f13 80%, #050607 100%);
+
+    color: var(--text-white);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* Capa extra de luz suave de fondo (opcional, para más profundidad) */
+.background-fx {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 20% 0%, rgba(255,255,255,0.07) 0%, transparent 55%),
+        radial-gradient(circle at 80% 100%, rgba(255,255,255,0.06) 0%, transparent 60%);
+    opacity: 0.9;
+    z-index: -1;
+}
+
+/* Scrollbars más discretos (por si scrollea la lista de ganadores en TV) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #111;
+}
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+/* ============================================
+   BLOQUE 2 – HEADER + NUEVO LAYOUT GENERAL
+   ============================================ */
+
+/* ----- HEADER SUPERIOR PREMIUM ----- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 28px;
+    background: rgba(10, 10, 10, 0.95);
+    border-bottom: 1px solid #333;
+    z-index: 100;
+    height: 60px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+/* Logo */
+/* =========================================
+   LOGO CORVEN (CON IMAGEN WEBP)
+   ========================================= */
+/* =========================================
+   LOGO CORVEN (Alineación Perfecta)
+   ========================================= */
+
+/* 1. El Contenedor Principal */
+.logo-container {
+    display: flex;           /* Pone la imagen al lado del texto */
+    align-items: center;     /* CRUCIAL: Centra verticalmente imagen y texto */
+    gap: 15px;               /* Espacio aireado entre el logo y las letras */
+    height: 100%;            /* Ocupa el alto del header */
+    padding-right: 20px;     /* Margen de seguridad a la derecha */
+    
+    /* Opcional: Línea divisoria sutil entre logo y texto */
+    /* border-right: 1px solid rgba(255,255,255,0.1); */ 
+}
+
+/* 2. El Ícono (La Imagen) */
+.logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.logo-icon img {
+    /* CONTROL TOTAL DE TAMAÑO */
+    height: 50px;           /* Altura fija: Esto evita que rompa el header */
+    width: auto;            /* El ancho se adapta solo */
+    object-fit: contain;    /* Asegura que la imagen no se deforme */
+    
+    /* Efecto estético */
+    filter: drop-shadow(0 0 5px rgba(255, 102, 0, 0.3)); /* Brillo sutil */
+    transition: transform 0.3s ease;
+}
+
+.logo-icon img:hover {
+    transform: scale(1.05); /* Zoom suave al pasar el mouse */
+    filter: drop-shadow(0 0 10px rgba(255, 102, 0, 0.6));
+}
+
+/* 3. El Texto (SORTEOS / CORVEN) */
+.logo-text {
+    display: flex;
+    flex-direction: column; /* Uno arriba del otro */
+    justify-content: center;
+    line-height: 1.2;       /* Altura de línea ajustada */
+}
+
+.logo-top {
+    font-size: 13px;
+    letter-spacing: 3px;    /* Espaciado moderno */
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--corven-orange); /* Color Naranja */
+    margin-bottom: 2px;     /* Separación mínima con el texto de abajo */
+}
+
+.logo-main {
+    font-size: 28px;        /* Tamaño grande pero controlado */
+    font-weight: 900;       /* Negrita fuerte */
+    color: white;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* --- AJUSTE RESPONSIVO (Para pantallas chicas) --- */
+@media (max-width: 768px) {
+    .logo-container { gap: 10px; }
+    .logo-icon img { height: 40px; } /* Se achica un poco */
+    .logo-top { font-size: 10px; }
+    .logo-main { font-size: 20px; }
+}
+/* Controles (input + botones) */
+.controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.controls input {
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    outline: none;
+    transition: 0.3s;
+}
+.controls input:focus {
+    border-color: var(--corven-orange);
+}
+
+.controls button {
+    background: #333;
+    border: 1px solid #555;
+    color: #ccc;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.controls button:hover {
+    background: var(--corven-orange);
+    color: white;
+    border-color: var(--corven-orange);
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.4);
+}
+
+/* ============================================
+   NUEVO LAYOUT GENERAL – SIN RULETA
+   ============================================ */
+
+/* EN style.css */
+
+main.app-layout {
+    flex: 1;
+    display: grid;
+    
+    /* CAMBIO CLAVE: 2 Columnas. 
+       El centro ocupa TODO el espacio libre (1fr), 
+       la derecha se queda fija en 340px */
+    grid-template-columns: minmax(0, 1fr); 
+
+    padding: 20px;
+    gap: 30px; /* Un poco más de aire entre el juego y la lista de ganadores */
+    height: calc(100vh - 60px);
+    overflow: hidden; 
+}
+
+/* -------- COLUMNA IZQUIERDA -------- */
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+/* Título sobre el odómetro */
+.title-odometer {
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--corven-gold);
+    text-align: center;
+}
+
+/* -------- COLUMNA DERECHA (GANADORES) -------- */
+.right-panel {
+    background: var(--panel-bg);
+    border-left: 1px solid #333;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    backdrop-filter: blur(10px);
+}
+
+/* Header dentro del panel */
+.winners-header {
+    display: flex;
+    flex-direction: column; /* Apilar uno sobre otro */
+    align-items: center;    /* Centrar horizontalmente */
+    justify-content: center;
+    gap: 15px;              /* Espacio entre el contador y el texto */
+    
+    /* Mantenemos la línea divisoria abajo */
+    border-bottom: 1px solid rgba(255, 102, 0, 0.3);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+/* 2. Estilo del Texto "GANADORES" */
+.winners-header h3 {
+    text-align: center;
+    font-size: 16px;
+    letter-spacing: 3px;
+    color: #D4AF37; /* Dorado */
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    margin: 0;
+}
+
+/* ============================================
+   BLOQUE 3 – ODOMETRO + LISTA + GANADORES + MODALES
+   ============================================ */
+
+/* --------------------------------------------
+   CONTADOR DE PARTICIPANTES (NÚMEROS)
+-------------------------------------------- */
+/* Agrega esto para estilizar el contenedor del contador en su nueva casa */
+.counter-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+    text-shadow: 0 0 10px rgba(255, 102, 0, 0.5); /* Brillo al título */
+}
+
+/* Ajuste opcional para que el título "PARTICIPANTES" se vea bien centrado */
+.counter-wrapper h3 {
+    text-align: center;
+    width: 100%;
+}
+
+/* Caja del odómetro (los 3 dígitos) */
+.odometer-frame {
+    /* Fondo oscuro brillante con borde de neón */
+    background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+    border: 2px solid #FF6600; /* Borde naranja Corven */
+    border-radius: 12px;
+    padding: 8px;
+    display: flex;
+    gap: 6px;
+    
+    /* Efecto de resplandor de luz */
+    box-shadow: 
+        0 0 20px rgba(255, 102, 0, 0.3), /* Resplandor naranja */
+        inset 0 0 15px rgba(0,0,0,0.8);  /* Profundidad interna */
+}
+
+/* Marco de cada dígito */
+.digit-box {
+    width: 55px;
+    height: 85px;
+    
+    /* Fondo de pantalla digital */
+    background: #000; /* Negro puro */
+    border: 1px solid #333;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    
+    /* Reflejo sutil de pantalla */
+    box-shadow: inset 0 5px 10px rgba(255,255,255,0.05);
+}
+/* Brillo y sombra superior/inferior */
+.digit-box::before,
+.digit-box::after {
+    content: none; /* Ya no los necesitamos */
+}
+
+/* La tira que rota */
+.number-strip {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.8s cubic-bezier(.33, 1, .68, 1);
+    will-change: transform;
+}
+
+/* Los Números (El toque final) */
+.number-strip span {
+    height: 85px; /* Coincide con digit-box */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Tipografía y Color */
+    font-family: 'Montserrat', sans-serif; /* O una fuente más digital si prefieres */
+    font-weight: 900;
+    font-size: 52px;
+    
+    /* Color Naranja/Dorado Brillante con Neón */
+    color: #FF8800; /* Naranja brillante */
+    text-shadow: 
+        0 0 10px rgba(255, 136, 0, 0.8), /* Brillo intenso */
+        0 0 20px rgba(255, 102, 0, 0.4); /* Resplandor exterior */
+}
+
+/* --------------------------------------------
+   ODOMETRO DE NOMBRES (LISTA DE PARTICIPANTES)
+-------------------------------------------- */
+.name-odometer {
+    position: relative;
+    width: 320px;
+    height: 180px;
+    overflow: hidden;
+    border: 2px solid var(--corven-gold);
+    background: rgba(0,0,0,0.70);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(212,175,55,0.4);
+    min-width: 150px;
+}
+
+/* El carril vertical */
+.odometer-reel {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    transition: none;
+}
+
+.odometer-reel li {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 20px;
+    text-transform: uppercase;
+    color: #fff;
+    opacity: 0.6;
+    letter-spacing: 1px;
+}
+
+/* El recuadro transparente de selección */
+.odometer-highlight {
+    position: absolute;
+    top: 60px;
+    width: 100%;
+    height: 60px;
+    border-top: 2px solid var(--corven-orange);
+    border-bottom: 2px solid var(--corven-orange);
+    z-index: 10;
+}
+
+/* Nombre ganador dentro del odómetro */
+.odometer-reel li.winner-odometer {
+    color: var(--corven-gold) !important;
+    font-size: 26px;
+    text-shadow: 0 0 12px rgba(212,175,55,0.9);
+    opacity: 1 !important;
+    transition: all 0.3s ease-out;
+}
+
+/* Zoom suave al ganador */
+.winner-zoom {
+    transform: scale(1.12);
+}
+
+.winners-list {
+    gap: 10px !important;    /* Más separación entre cada tarjeta */
+    padding: 5px !important; /* Un poco de margen interno */
+}
+
+/* 2. La Tarjeta del Ganador (El bloque gris) */
+.winner-card {
+    /* Hacemos la tarjeta mucho más alta y cómoda */
+    padding: 8px 12px !important; 
+    
+    /* Fondo más elegante con degradado sutil */
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a) !important;
+    
+    /* Borde dorado lateral más grueso y llamativo */
+    border-left: 4px solid #D4AF37 !important; 
+    border-radius: 8px !important;
+    
+    /* Sombra para que parezca flotar */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4) !important;
+
+    /* Altura más controlada */
+    min-height: 40px !important;
+}
+
+/* 3. El Nombre (Texto) */
+.w-name {
+    font-size: 15px !important;   /* Antes 14px -> Ahora 22px (Gigante) */
+    font-weight: 600 !important;  /* Letra bien gruesa */
+    letter-spacing: 0.5px !important;
+    color: #ffffff !important;
+    text-transform: uppercase !important; /* Opcional: Nombres en MAYÚSCULAS */
+    
+    /* Aseguramos que el texto no se rompa si es muy largo */
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* 4. El Trofeo (Ícono) */
+.trophy-icon {
+    font-size: 16px !important; /* Trofeo grande */
+    margin-right: 8px !important;
+    
+    /* Efecto de brillo dorado alrededor del trofeo */
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.8));
+}
+
+
+/* --------------------------------------------
+   PANEL DERECHA – GANADORES
+-------------------------------------------- */
+
+.winners-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: gap 0.4s ease;
+}
+
+/* Tarjeta animada */
+.winner-card {
+    background: #222;
+    padding: 12px 10px;
+    border-radius: 6px;
+    border-left: 3px solid var(--corven-gold);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.35);
+    animation: slideIn 0.4s ease;
+}
+.trophy-icon {
+    color: var(--corven-gold);
+    font-size: 16px;
+}
+.w-name {
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.empty-state {
+    color: #777;
+    text-align: center;
+    margin-top: 50px;
+    font-style: italic;
+}
+
+
+/* Botón para exportar PDF */
+.btn-export {
+    margin-top: 15px;
+    background: transparent;
+    border: 1px solid #555;
+    color: #aaa;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.3s;
+}
+.btn-export:hover {
+    border-color: var(--text-white);
+    color: var(--text-white);
+    background: rgba(255,255,255,0.05);
+}
+
+/* --------------------------------------------
+   MODALES (GANADOR + DUPLICADOS)
+-------------------------------------------- */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #1a1a1a;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    border: 2px solid var(--corven-gold);
+    box-shadow: 0 0 60px rgba(212,175,55,0.22);
+    min-width: 380px;
+}
+
+.modal-content h2 {
+    color: var(--corven-gold);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.winner-name {
+    font-size: 36px;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+.modal-actions button {
+    padding: 12px 25px;
+    margin: 0 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    border: none;
+}
+
+.modal-actions button:first-child {
+    background: var(--corven-orange);
+    color: white;
+}
+.modal-actions button:last-child {
+    background: transparent;
+    border: 1px solid #555;
+    color: #ccc;
+}
+
+/* Lista de duplicados */
+.dupes-container {
+    text-align: left;
+    margin-bottom: 20px;
+}
+.dupe-list {
+    background: #111;
+    border: 1px solid #444;
+    border-radius: 5px;
+    height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    list-style: none;
+}
+.dupe-list li {
+    color: #ff8888;
+    font-size: 13px;
+    border-bottom: 1px solid #222;
+    padding: 5px 0;
+}
+
+/* Animación */
+@keyframes slideIn {
+    from {
+        transform: translateX(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   BLOQUE 4 – RESPONSIVIDAD ESPECIAL 3x3 (2560×1536)
+   ============================================ */
+
+/* ----------- MODO GIGANTE PARA 9 TV UNIDOS ----------- */
+/* Entra cuando se use una pantalla >= 2200px de ancho */
+@media (min-width: 2200px) {
+
+    html {
+        font-size: 22px;
+    }
+
+    body {
+        overflow: hidden;
+    }
+
+    /* Layout general */
+   /* EN style.css - Reemplaza la regla main.app-layout */
+/* EN style.css - Reemplaza todo el bloque main.app-layout */
+
+main.app-layout {
+    flex: 1;
+    display: grid;
+    
+    /* CORRECCIÓN: Agregamos "340px" al final. 
+       Antes tenías solo "minmax(0, 1fr)", por eso fallaba. */
+    grid-template-columns: minmax(0, 1fr) 340px; 
+
+    padding: 20px;
+    gap: 30px;
+    height: calc(100vh - 60px);
+    overflow: hidden; 
+}
+
+    /* ------------------------
+       CONTADOR DE NÚMEROS
+    ------------------------ */
+    .digit-box {
+        width: 80px;
+        height: 120px;
+        border-width: 2px;
+    }
+
+    .number-strip span {
+        height: 120px;
+        font-size: 78px;
+    }
+
+    /* ------------------------
+       LISTA DE PARTICIPANTES
+    ------------------------ */
+
+
+    /* ------------------------
+       PANEL DE GANADORES
+    ------------------------ */
+    .right-panel {
+        padding: 40px;
+        border-left-width: 2px;
+    }
+
+    .winner-card {
+        padding: 20px 18px;
+        font-size: 22px;
+        gap: 15px;
+    }
+    .trophy-icon {
+        font-size: 26px;
+    }
+
+    .btn-export {
+        padding: 18px;
+        font-size: 20px;
+        border-width: 2px;
+    }
+
+    /* ------------------------
+       MODALES
+    ------------------------ */
+    .modal-content {
+        padding: 60px;
+        min-width: 600px;
+    }
+
+    .winner-name {
+        font-size: 52px;
+    }
+}
+
+/* ----------- MODO ESTÁNDAR FULL HD ----------- */
+@media (min-width: 1400px) and (max-width: 2199px) {
+
+    main.app-layout {
+        grid-template-columns: minmax(0, 1fr) 360px;
+        gap: 30px;
+    }
+
+    /* Ajustamos tamaños para que se vea grande y lindo en monitores HD */
+    .name-odometer {
+        width: 32%; /* Ocupan un tercio del espacio central cada uno */
+        height: 200px;
+    }
+
+    .odometer-reel li {
+        font-size: 22px; /* Letra grande legible */
+        height: 70px; /* Renglón más alto */
+    }
+
+    /* Ajuste del contador numérico superior */
+    .digit-box {
+        width: 60px;
+        height: 90px;
+    }
+    .number-strip span {
+        height: 90px;
+        font-size: 60px;
+    }
+}
+
+/* ----------- TABLET Y LAPTOP ----------- */
+/* EN style.css - Modifica la media query existente */
+
+/* Bajamos de 1100px a 960px para salvar la vista en proyectores/laptops chicas */
+@media (max-width: 960px) {
+    main.app-layout {
+        grid-template-columns: 1fr; /* Aquí sí, una sola columna */
+        grid-template-rows: auto auto 1fr; /* Orden vertical */
+        height: auto; /* Permitir scroll vertical en pantallas chicas */
+        padding: 15px;
+        overflow-y: auto; /* Habilitar scroll en el body si hace falta */
+    }
+
+    .right-panel {
+        border-left: none;
+        border-top: 1px solid #333;
+        height: 500px; /* Altura fija para la lista de ganadores en móvil */
+    }
+
+    /* Ocultamos cosas innecesarias en móvil si quieres */
+    .title-odometer {
+        display: none; 
+    }
+}
+/* Botón archivo estilo premium */
+.btn-file {
+    background: #333;
+    border: 1px solid #555;
+    color: #ccc;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-file:hover {
+    background: var(--corven-orange);
+    color: white;
+    border-color: var(--corven-orange);
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.4);
+}
+
+.btn-file input {
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    opacity: 0; cursor: pointer;
+}
+
+/* BOTÓN SORTEAR */
+.btn-sortear {
+    /* 1. TAMAÑO Y FORMA */
+    padding: 15px 50px;      /* Más ancho y alto */
+    font-size: 24px;         /* Letra mucho más grande */
+    border-radius: 50px;     /* Bordes totalmente redondeados */
+    min-width: 200px;        /* Ancho mínimo asegurado */
+    
+    /* 2. TIPOGRAFÍA */
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;        /* Negrita extra */
+    text-transform: uppercase;
+    letter-spacing: 2px;     /* Espaciado elegante */
+    color: white;
+    
+    /* 3. COLORES Y DEGRADADO (Naranja Corven Intenso) */
+    background: linear-gradient(180deg, #FF9933 0%, #FF4500 100%);
+    border: 2px solid #FFD700; /* Borde dorado fino para resaltar */
+    
+    /* 4. EFECTOS 3D Y GLOW (La clave del estilo) */
+    box-shadow: 
+        0 8px 0 #992b00,                /* Sombra dura inferior (Efecto 3D) */
+        0 0 30px rgba(255, 102, 0, 0.6), /* Resplandor de Neón alrededor */
+        0 15px 20px rgba(0,0,0,0.4);     /* Sombra de profundidad */
+        
+    /* 5. COMPORTAMIENTO */
+    cursor: pointer;
+    transition: all 0.1s ease; /* Transición rápida para efecto de click */
+    position: relative;
+    top: 0;
+    
+    /* Alineación del icono y texto */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px; /* Espacio entre el icono y el texto */
+    margin-top: 20px; /* Separación de los odómetros */
+}
+
+.btn-sortear:hover {
+    background: linear-gradient(180deg, #FFAA44 0%, #FF5500 100%); /* Más brillante */
+    box-shadow: 
+        0 8px 0 #992b00,
+        0 0 50px rgba(255, 102, 0, 0.9), /* Glow más intenso */
+        0 15px 20px rgba(0,0,0,0.4);
+    transform: translateY(-2px); /* Se levanta un poquito */
+}
+
+/* EFECTO ACTIVE (Cuando lo presionas) */
+.btn-sortear:active {
+    top: 6px; /* Se mueve físicamente hacia abajo */
+    box-shadow: 
+        0 2px 0 #992b00, /* La sombra 3D se aplasta */
+        0 0 20px rgba(255, 102, 0, 0.4),
+        inset 0 4px 10px rgba(0,0,0,0.2); /* Sombra interna */
+}
+
+/* ANIMACIÓN SUTIL DEL ÍCONO (Opcional) */
+.btn-sortear:hover::before {
+    /* Si tienes un icono, podemos hacerlo girar un poco */
+    content: '🎯'; /* Aseguramos que el icono sea parte del estilo si no está en HTML */
+    font-size: 28px;
+    animation: spinIcon 1s ease-in-out infinite;
+    display: none; /* Borra esto si quieres forzar el icono desde CSS */
+}
+
+/* Panel central con 3 odómetros alineados */
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* 3 odómetros en fila */
+.triple-odometer {
+    display: flex;
+    gap: 2%;             /* Usamos % en lugar de px fijos para la separación */
+    align-items: center;
+    justify-content: center;
+    width: 100%;         /* Asegura que use todo el ancho de la columna central */
+    max-width: 1200px;   /* Tope máximo */
+}
+/* =======================================================
+   MARCO PREMIUM "CORVEN STYLE" (CSS PURO)
+   ======================================================= */
+
+.corven-frame-container {
+    /* 1. ESTRUCTURA Y FONDO */
+    position: relative;
+    padding: 30px; /* Espacio para que el marco no toque los números */
+    border-radius: 20px; /* Bordes redondeados modernos */
+    
+    /* Fondo metálico oscuro degradado */
+    background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+    
+    /* 2. BORDES DE ALTA TECNOLOGÍA */
+    /* Borde fino gris oscuro base */
+    border: 1px solid #333;
+    
+    /* 3. ILUMINACIÓN (La Magia) */
+    /* Sombra interna para dar profundidad */
+    box-shadow: 
+        inset 0 0 30px rgba(0,0,0,0.8), /* Profundidad interna */
+        0 0 0 2px rgba(212, 175, 55, 0.1), /* Borde sutil dorado exterior */
+        0 0 25px rgba(255, 102, 0, 0.15); /* Resplandor Naranja suave (Ambiente) */
+        
+    /* Aseguramos que se comporte bien en flex */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* --- DETALLES DECORATIVOS (BARRAS DE LUZ) --- */
+/* Creamos dos líneas de luz (Arriba y Abajo) para el toque "Cyber/Automotriz" */
+
+.corven-frame-container::before,
+.corven-frame-container::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%; /* No ocupa todo el ancho, solo el centro */
+    height: 3px;
+    border-radius: 2px;
+}
+
+/* Barra de Luz Superior (Dorado Corven) */
+.corven-frame-container::before {
+    top: 0;
+    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+    box-shadow: 0 0 15px #D4AF37;
+}
+
+/* Barra de Luz Inferior (Naranja Corven) */
+.corven-frame-container::after {
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, #FF6600, transparent);
+    box-shadow: 0 0 15px #FF6600;
+}
+
+/* --- AJUSTE PARA TUS ODOMETROS INDIVIDUALES --- */
+/* Para que se integren mejor dentro del nuevo marco, les quitamos bordes pesados */
+.corven-frame-container .name-odometer {
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde muy sutil */
+    background: rgba(0, 0, 0, 0.5); /* Más oscuro para contraste */
+    box-shadow: none; /* Quitamos sombras viejas para limpiar */
+}
+.sortear-below {
+    margin-top: 10px;
+}
+/* Fix definitivo del odómetro numérico */
+.digit-box {
+    height: 80px !important;
+    overflow: hidden;
+}
+
+.number-strip {
+    transition: transform 0.6s ease-out;
+}
+
+.number-strip span {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 80px !important;
+    font-size: 52px !important;
+    line-height: 80px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* =============================================
+   CORRECCIÓN FUNDAMENTAL DEL ODOMETER
+   ============================================= */
+
+/* =============================================
+   ODOMETRO VERTICAL DE NOMBRES — VERSIÓN FINAL
+   ============================================= */
+
+/* =============================================
+   ODOMETRO VERTICAL DE NOMBRES — VERSIÓN FINAL
+   ============================================= */
+
+.name-odometer {
+    position: relative;
+    width: 30%;
+    max-width: 360px;
+    min-width: 200px;
+    height: 180px;
+    
+    /* Mantenemos el fondo oscuro semi-transparente */
+    background: rgba(0,0,0,0.8); 
+    border-radius: 12px;
+    border: 2px solid var(--corven-gold);
+    box-shadow: 0 0 20px rgba(212,175,55,0.4);
+    
+    overflow: hidden;
+    flex-shrink: 1;
+
+    /* --- AQUÍ ESTÁ LA MAGIA DEL EFECTO DE BORRADO --- */
+    
+    /* 1. MASK-IMAGE: Crea el desvanecido progresivo */
+    /* Transparente arriba (0%) -> Visible en el medio (25% a 75%) -> Transparente abajo (100%) */
+    -webkit-mask-image: linear-gradient(
+        to bottom, 
+        transparent 0%, 
+        black 25%, 
+        black 75%, 
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        to bottom, 
+        transparent 0%, 
+        black 25%, 
+        black 75%, 
+        transparent 100%
+    );
+
+    /* 2. SOMBRA INTERNA: Agrega "profundidad" y oscuridad en los bordes */
+    /* Esto ayuda a que el "blur" se sienta más profundo */
+    box-shadow: 
+        inset 0 30px 30px -10px rgba(0,0,0,0.9),  /* Sombra interna arriba */
+        inset 0 -30px 30px -10px rgba(0,0,0,0.9), /* Sombra interna abajo */
+        0 0 20px rgba(212,175,55,0.4);            /* Tu brillo exterior original */
+}
+
+.odometer-reel {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s ease-out;
+}
+
+.odometer-reel li {
+    /* ... tus estilos actuales ... */
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* ... */
+
+    /* AGREGAR ESTO PARA NOMBRES LARGOS: */
+    width: 100%;           /* Ocupar todo el ancho del rodillo */
+    white-space: nowrap;   /* No permitir que el texto salte de línea */
+    overflow: hidden;      /* Cortar lo que sobre */
+    text-overflow: ellipsis; /* Poner "..." si es muy largo */
+    padding: 0 10px;       /* Un poco de aire a los costados */
+}
+
+.odometer-highlight {
+    position: absolute;
+    top: 60px;
+    width: 100%;
+    height: 60px;
+    border-top: 2px solid var(--corven-orange);
+    border-bottom: 2px solid var(--corven-orange);
+    pointer-events: none;
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);;
+    z-index: 50;
+}
+
+.winner-odometer {
+    color: var(--corven-gold) !important;
+    font-size: 28px !important;
+    opacity: 1 !important;
+    text-shadow: 0 0 12px rgba(212,175,55,0.9);
+}
+
+.winner-zoom {
+    transform: scale(1.12);
+}
+
+
+/* Flechas */
+.arrow-left, .arrow-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 60;
+}
+
+.arrow-left {
+    left: -25px;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-right: 18px solid orange;
+}
+
+.arrow-right {
+    right: -25px;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 18px solid orange;
+}
+
+/* ============================================
+   MINI ODOMETER (GANADORES) — FIX COMPLETO
+   ============================================ */
+
+.mini-odometer {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.mini-odometer.odometer-frame {
+    /* Mismo fondo y borde que el grande */
+    background: linear-gradient(145deg, #1a1a1a, #0d0d0d) !important;
+    border: 2px solid #FF6600 !important;
+    border-radius: 12px !important;
+    padding: 6px !important;
+    gap: 5px !important;
+    
+    /* Mismo brillo exterior */
+    box-shadow: 
+        0 0 15px rgba(255, 102, 0, 0.25),
+        inset 0 0 10px rgba(0,0,0,0.8) !important;
+}
+
+.mini-odometer .digit-box {
+    /* Fondo Negro Puro (Igual al grande) */
+    background: #000 !important;
+    border: 1px solid #333 !important;
+    border-radius: 6px !important;
+    
+    /* MEDIDAS: Usamos 70px para que entre en el panel lateral */
+    width: 50px !important;
+    height: 70px !important; 
+    
+    /* Quitamos estilos viejos */
+    box-shadow: inset 0 5px 10px rgba(255,255,255,0.05) !important;
+    overflow: hidden !important;
+}
+
+/* 3. Los Números (Texto Neón) */
+.mini-odometer .number-strip span {
+    /* Mismo color Naranja Fuego */
+    color: #FF8800 !important;
+    
+    /* Mismo efecto de luz de neón */
+    text-shadow: 
+        0 0 10px rgba(255, 136, 0, 0.8),
+        0 0 20px rgba(255, 102, 0, 0.4) !important;
+        
+    /* Tipografía igual al grande */
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 900 !important;
+    
+    /* Ajuste de altura obligatoria para que no se desfase */
+    height: 70px !important;
+    line-height: 70px !important;
+    font-size: 42px !important;
+    
+    /* Limpieza */
+    background: transparent !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+/* Ajustar brillos superiores/inferiores */
+.mini-odometer .digit-box::before,
+.mini-odometer .digit-box::after {
+    height: 22%;
+}
+
+.mini-odometer .digit-box::before {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+}
+
+.mini-odometer .digit-box::after {
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+}
+
+/* La tira del mini odómetro */
+.mini-odometer .number-strip {
+    transition: transform 0.5s cubic-bezier(.33,1,.68,1);
+}
+
+/* Números internos */
+
+/* =========================================
+   MODO NOTEBOOK / PROYECTOR – AJUSTES
+   ========================================= */
+@media (min-width: 1000px) and (max-width: 1500px) {
+
+    main.app-layout {
+        /* Achicamos el panel derecho a 260px para darle más aire al centro */
+        grid-template-columns: minmax(0, 1fr) 260px; 
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    /* 1. Odómetros más flexibles */
+    .name-odometer {
+        width: 32%;        
+        min-width: 0; /* Permite que se encojan si hace falta */
+    }
+
+    /* 2. SOLUCIÓN TEXTO CORTADO: Letra más chica y apretada */
+    .odometer-reel li {
+        font-size: 14px !important;  /* Bajamos de 20px a 14px */
+        font-weight: 800;            /* Negrita extra para compensar el tamaño */
+        letter-spacing: -0.5px;      /* Juntamos las letras un poquito */
+        padding: 0 2px;
+    }
+
+    /* 3. Ajuste del contador superior (Participantes) */
+    .digit-box {
+        height: 60px !important;
+        width: 40px !important;
+    }
+    .number-strip span {
+        height: 60px !important;
+        font-size: 38px !important;
+    }
+}
+
+/* ============================================
+   DEBUG VISUAL – VER ESPACIOS Y HUECOS
+   ============================================ */
+/*main.app-layout { 
+    border: 5px solid red !important; 
+    background: #333 !important;  Gris de fondo para ver huecos 
+}
+
+.center-panel { 
+    border: 5px solid yellow !important; 
+    background: rgba(255, 255, 0, 0.1) !important; /* Amarillo transparente 
+}
+
+.right-panel { 
+    border: 5px solid cyan !important; 
+    background: rgba(0, 255, 255, 0.1) !important; /* Cyan transparente 
+}
+*/
+@media (min-width: 2200px) {
+    .digit-box { width: 90px; height: 130px; }
+    .number-strip span { height: 130px; font-size: 85px; }
+}
+/* --- AJUSTE PARA NOTEBOOKS --- */
+@media (min-width: 1000px) and (max-width: 1500px) {
+    .digit-box { width: 45px; height: 70px; }
+    .number-strip span { height: 70px; font-size: 42px; }
+}
+
+/* =========================================================
+   ANIMACIÓN "ESPERANDO GANADOR..." (PULSO)
+   ========================================================= */
+
+/* 1. Definimos la animación */
+@keyframes pulseWaiting {
+    0% {
+        opacity: 0.3;
+        transform: scale(0.98);
+    }
+    50% {
+        opacity: 1;
+        color: #FF6600; /* Se pone naranja brillante a mitad de camino */
+        text-shadow: 0 0 15px rgba(255, 102, 0, 0.5); /* Resplandor */
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0.3;
+        color: #666; /* Vuelve al gris */
+        transform: scale(0.98);
+    }
+}
+
+/* 2. Aplicamos la animación al texto existente */
+.empty-state {
+    /* Mejoramos un poco la fuente base */
+    font-size: 16px !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    margin-top: 80px !important; /* Un poco más abajo para centrarlo visualmente */
+    
+    /* APLICAMOS LA MAGIA */
+    animation: pulseWaiting 2s infinite ease-in-out !important;
+}
+
+/* =========================================================
+   TEXTO DE PROBABILIDAD
+   ========================================================= */
+.prob-text {
+    margin-top: 15px;      /* Separación del contador */
+    font-size: 14px;       /* Tamaño discreto */
+    color: #888;           /* Gris elegante */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.prob-num {
+    color: #FF6600;        /* Naranja Corven */
+    font-weight: 800;
+    font-size: 16px;
+    text-shadow: 0 0 10px rgba(255, 102, 0, 0.3); /* Brillo suave */
+}
+
+/* =========================================================
+   FIX DEFINITIVO PARA TV 4K / 70"+ (3840px de ancho)
+   ========================================================= */
+
+@media (min-width: 2000px) {
+
+    /* 1. ARREGLAR LAYOUT (Dar más espacio a la lista de ganadores) */
+    main.app-layout {
+        /* Aumentamos la columna derecha de 340px a 600px */
+        grid-template-columns: minmax(0, 1fr) 600px !important; 
+        gap: 50px !important;
+        padding: 40px !important;
+    }
+
+    /* 2. ARREGLAR CONTADOR DE PARTICIPANTES (El que se ve roto) */
+    /* TRUCO: No cambiamos el height (dejamos 80px para que el JS funcione bien)
+       pero usamos SCALE para que se vea GIGANTE visualmente */
+    .counter-wrapper .odometer-frame {
+        transform: scale(2.0); /* Duplicamos su tamaño visualmente */
+        margin-bottom: 60px;   /* Damos espacio porque el scale ocupa lugar */
+        transform-origin: center top;
+    }
+
+    /* Aseguramos que las medidas internas coincidan con el JS (80px) */
+    .digit-box {
+        height: 80px !important; /* NO CAMBIAR - Coincide con JS */
+        width: 55px !important;
+    }
+    .number-strip span {
+        height: 80px !important; /* NO CAMBIAR - Coincide con JS */
+        font-size: 50px !important;
+    }
+
+    /* 3. ARREGLAR LISTA DE GANADORES (Nombres cortados) */
+    .right-panel {
+        padding: 30px !important;
+    }
+
+    /* Tarjetas más grandes y anchas */
+    .winner-card {
+        padding: 20px 25px !important;
+        border-left-width: 8px !important;
+    }
+
+    /* Texto de ganadores mucho más grande y legible */
+    .w-name {
+        font-size: 32px !important; /* Letra gigante */
+        white-space: normal !important; /* Permitir que ocupe espacio si sobra */
+    }
+
+    .trophy-icon {
+        font-size: 35px !important;
+    }
+    
+    /* 4. ARREGLAR BOTÓN SORTEAR */
+    .btn-sortear {
+        transform: scale(1.1); /* Botón 50% más grande */
+        margin-top: 50px;
+    }
+    
+    /* 5. ARREGLAR ODOMETROS CENTRALES */
+    /* Los hacemos más altos visualmente */
+    .triple-odometer {
+        transform: scale(1.3);
+        margin-top: 50px;
+    }
+}
+
+/* =========================================================
+   PARCHE PARA TV GIGANTE (80" / 4K)
+   ========================================================= */
+@media (min-width: 1900px) {
+
+    /* 1. EL CONTADOR DE PARTICIPANTES */
+    .counter-wrapper .odometer-frame {
+        /* TRUCO DE MAGIA: */
+        /* No cambiamos medidas en px, solo hacemos ZOOM x2.5 */
+        transform: scale(2.5); 
+        transform-origin: top center; /* Que crezca desde el centro */
+        margin-bottom: 100px; /* Damos espacio abajo porque el zoom ocupa lugar */
+        margin-top: 40px;
+    }
+
+    /* 2. CANDADO DE SEGURIDAD (Muy Importante) */
+    /* Forzamos a que, internamente, sigan midiendo 80px para que el JS no falle */
+    .digit-box {
+        height: 80px !important;
+        width: 55px !important; 
+    }
+    
+    .number-strip span {
+        height: 80px !important;
+        font-size: 52px !important;
+        line-height: 80px !important;
+    }
+
+    /* 3. AJUSTE DE LA LISTA DE GANADORES (Derecha) */
+    /* Para que en la TV se lea bien */
+    .right-panel {
+        width: 500px !important; /* Panel más ancho */
+    }
+    .winner-card {
+        padding: 20px !important;
+    }
+    .w-name {
+        font-size: 28px !important; /* Letra gigante */
+    }
+    .trophy-icon {
+        font-size: 30px !important;
+    }
+    
+    /* 4. AJUSTE DEL TÍTULO DE PROBABILIDAD */
+    .prob-text {
+        font-size: 20px !important;
+        margin-top: 20px !important;
+    }
+    .prob-num {
+        font-size: 24px !important;
+    }
+}
+
+/* =========================================================
+   ESTÁNDAR UNIFICADO (Notebooks + TV HD/Full HD)
+   Rango: 1200px a 1919px
+   ========================================================= */
+@media (min-width: 1200px) and (max-width: 1919px) {
+
+    /* 1. LAYOUT ROBUSTO */
+    main.app-layout {
+        display: grid;
+        /* Columna ganadores fija en 320px para que no baile */
+        grid-template-columns: minmax(0, 1fr) 320px !important; 
+        gap: 20px !important;
+        padding: 20px !important;
+        height: calc(100vh - 60px); /* Ajuste de altura */
+    }
+
+    /* 2. ARREGLAR CONTADOR DE PARTICIPANTES (CRÍTICO) */
+    /* Forzamos las medidas exactas que usa el Javascript (80px) */
+    .counter-wrapper .odometer-frame {
+        transform: scale(1); /* Sin zoom raro */
+        margin: 0 0 20px 0;
+    }
+    
+    .digit-box {
+        width: 55px !important;
+        height: 80px !important; /* TIENE QUE SER 80px SI O SI */
+    }
+
+    .number-strip span {
+        height: 80px !important; /* TIENE QUE SER 80px SI O SI */
+        font-size: 50px !important;
+        line-height: 80px !important;
+    }
+
+    /* 3. ARREGLAR TAMAÑO DE NOMBRES (Equilibrio Notebook/TV) */
+    .name-odometer {
+        width: 32% !important; /* Ancho flexible */
+    }
+
+    .odometer-reel li {
+        /* 16px es el punto dulce: legible en TV, no gigante en Notebook */
+        font-size: 16px !important; 
+        font-weight: 700 !important;
+        padding: 0 5px !important;
+    }
+
+    /* 4. LISTA DE GANADORES (Derecha) */
+    .winner-card {
+        padding: 10px 15px !important;
+    }
+    .w-name {
+        font-size: 16px !important; /* Tamaño controlado */
+    }
+    .trophy-icon {
+        font-size: 18px !important;
+    }
+}

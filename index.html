@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador Premium</title>
+    <link rel="stylesheet" href="style.css">
+    
+
+</head>
+
+<body>
+
+    <!-- Fondo suave -->
+    <div class="background-fx"></div>
+
+    <!-- ===========================================
+         HEADER SUPERIOR
+    ============================================ -->
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">
+                <img src="logos_grupo-corven_para_fondo_blanco 1.png" alt="Corven Logo">
+            </div>
+            <div class="logo-text">
+                <span class="logo-top">SORTEOS</span>
+                <span class="logo-main">CORVEN</span>
+            </div>
+        </div>
+
+        <!-- Controles -->
+        <div class="controls">
+
+            <input type="text" id="nameInput" placeholder="Agregar participante">
+
+            <button onclick="addName()">Agregar</button>
+            <button onclick="showParticipantsModal()">📋 Ver Lista</button>
+            <button onclick="clearList()">Limpiar</button>
+
+            <!-- IMPORTAR TXT / CSV -->
+            <label class="btn-file">
+                Importar TXT/CSV
+                <input type="file" accept=".txt,.csv" onchange="handleFileUpload(this)">
+            </label>
+
+            <!-- IMPORTAR EXCEL -->
+            <label class="btn-file">
+                Importar Excel
+                <input type="file" accept=".xlsx,.xls" onchange="handleExcelUpload(this)">
+            </label>
+        </div>
+
+    </header>
+
+    <!-- ===========================================
+         NUEVO LAYOUT GENERAL
+    ============================================ -->
+    <main class="app-layout">
+
+        <!-- =======================================
+             COLUMNA CENTRAL
+             (Vacía para resaltar odómetro)
+        ======================================== -->
+        <section class="center-panel">
+        <div class="counter-wrapper">
+                <h3>PARTICIPANTES</h3>
+                
+                <div class="odometer-frame">
+                    <!--<div id="probDisplay" class="prob-text">Probabilidad de ganar: <span class="prob-num">0%</span></div>-->
+                    <div class="digit-box"><div class="number-strip" id="strip1"></div></div>
+                    <div class="digit-box"><div class="number-strip" id="strip2"></div></div>
+                    <div class="digit-box"><div class="number-strip" id="strip3"></div></div>
+                    <div class="digit-box"><div class="number-strip" id="strip4"></div></div>
+                </div>
+        </div>
+        <h2 class="title-odometer">LISTA</h2>
+
+        <div class="triple-odometer corven-frame-container">
+            <!-- ODOMETRO 1 -->
+            <div class="name-odometer">
+                <ul id="odometerReel1" class="odometer-reel"></ul>
+                <div class="odometer-highlight"></div>
+                <div class="arrow-left"></div>
+                <div class="arrow-right"></div>
+            </div>
+
+
+
+            <!-- ODOMETRO 2 -->
+            <div class="name-odometer">
+                <ul id="odometerReel2" class="odometer-reel"></ul>
+                <div class="odometer-highlight"></div>
+                <div class="arrow-left"></div>
+                <div class="arrow-right"></div>
+            </div>
+
+
+            <!-- ODOMETRO 3 -->
+            <div class="name-odometer">
+                <ul id="odometerReel3" class="odometer-reel"></ul>
+                <div class="odometer-highlight"></div>
+                <div class="arrow-left"></div>
+                <div class="arrow-right"></div>
+            </div>
+
+        </div>
+
+        <button onclick="sortear()" class="btn-sortear sortear-below">🎯 Sortear</button>
+
+        </section>
+
+        <!-- =======================================
+             COLUMNA DERECHA – PANEL GANADORES
+        ======================================== -->
+        <section class="right-panel premium-panel">
+
+            <div class="winners-header">
+                <!-- Mini odómetro de ganadores -->
+                <div class="mini-odometer odometer-frame">
+                    <div class="digit-box"><div class="number-strip" id="winStrip1"></div></div>
+                    <div class="digit-box"><div class="number-strip" id="winStrip2"></div></div>
+                </div>
+                <h3>GANADORES</h3>
+            </div>
+
+            <!-- Lista animada de ganadores -->
+            <div class="winners-list" id="winnersList">
+                <div class="empty-state">Esperando ganador...</div>
+            </div>
+
+            <button class="btn-export" onclick="exportPDF()">🖨️ Exportar PDF</button>
+        </section>
+
+    </main>
+
+    <!-- ===========================================
+         MODAL GANADOR
+    ============================================ -->
+    <div id="winnerModal" class="modal">
+        <div class="modal-content">
+            <h2>¡GANADOR!</h2>
+            <div id="winnerName" class="winner-name">---</div>
+
+            <div class="modal-actions">
+                <button onclick="confirmWinner()">Aceptar</button>
+                <button onclick="closeWinnerModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         MODAL DUPLICADOS
+    ============================================ -->
+    <div id="dupeModal" class="modal">
+        <div class="modal-content">
+
+            <h2>Duplicados Detectados</h2>
+
+            <div class="dupes-container">
+                <ul id="dupeList" class="dupe-list"></ul>
+            </div>
+
+            <div class="modal-actions">
+                <button onclick="closeDupeModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    <div id="participantsModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; width: 90%;">
+            <h2 style="color: var(--corven-orange);">📋 LISTA DE PARTICIPANTES</h2>
+            
+            <input type="text" id="searchParticipant" placeholder="🔍 Buscar nombre..." onkeyup="filterParticipants()" 
+                style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #444; background: #222; color: white;">
+
+            <div style="text-align: right; font-size: 12px; color: #888; margin-bottom: 5px;">
+                Total: <span id="totalParticipantsBadge">0</span>
+            </div>
+
+            <ul id="fullParticipantsList" style="
+                height: 400px; 
+                overflow-y: auto; 
+                text-align: left; 
+                background: #111; 
+                padding: 10px; 
+                border: 1px solid #333; 
+                border-radius: 5px; 
+                list-style: none;">
+                </ul>
+
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button onclick="closeParticipantsModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    <!-- JAVASCRIPT -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+</body>
+</html>
