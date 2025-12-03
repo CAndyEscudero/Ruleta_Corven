@@ -1488,3 +1488,60 @@ main.app-layout {
         font-size: 18px !important;
     }
 }
+
+/* =========================================================
+   FIX ESPECÍFICO: NOTEBOOKS/MONITORES 1920x1080 (Escala 100%)
+   Rango: 1700px a 1950px
+   ========================================================= */
+@media (min-width: 1700px) and (max-width: 1950px) {
+
+    /* 1. CONTROL DE LA ESTRUCTURA (Para que no se "vaya" la lista) */
+    main.app-layout {
+        display: grid;
+        /* Columna derecha FIJA de 340px. El resto para el juego. */
+        /* minmax(0, 1fr) evita que el juego empuje a la lista fuera de pantalla */
+        grid-template-columns: minmax(0, 1fr) 340px !important; 
+        
+        gap: 20px !important;
+        padding: 20px !important;
+        
+        /* Asegura que no haya scroll que esconda cosas */
+        height: calc(100vh - 60px) !important; 
+        overflow: hidden !important; 
+    }
+
+    /* 2. CONTADOR DE PARTICIPANTES (Zoom Controlado) */
+    /* En 100% se ve chico, así que lo agrandamos un poco (25%), 
+       pero no tanto como para romper el diseño */
+    .counter-wrapper .odometer-frame {
+        transform: scale(1.25); 
+        transform-origin: top center;
+        margin-bottom: 35px; /* Espacio para compensar el zoom */
+    }
+
+    /* Forzamos medidas internas para que el JS no falle */
+    .digit-box { height: 80px !important; width: 55px !important; }
+    .number-strip span { height: 80px !important; font-size: 50px !important; }
+
+
+    /* 3. LISTA DE GANADORES (Compacta y Legible) */
+    .right-panel {
+        /* Aseguramos que entre en la columna de 340px */
+        width: 100% !important; 
+        padding: 15px !important;
+    }
+
+    .winner-card {
+        padding: 10px 12px !important;
+    }
+
+    .w-name {
+        font-size: 16px !important; /* Tamaño ideal para leer a 1 metro */
+    }
+
+    /* 4. ODÓMETROS CENTRALES */
+    .triple-odometer {
+        /* Si sobra espacio, los agrandamos un pelín */
+        transform: scale(1.1);
+    }
+}
