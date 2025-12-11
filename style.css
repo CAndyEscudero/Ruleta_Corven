@@ -236,38 +236,112 @@ main.app-layout {
 }
 
 /* -------- COLUMNA DERECHA (GANADORES) -------- */
+/* --------------------------------------------
+   PANEL DERECHA – GANADORES (CORREGIDO)
+-------------------------------------------- */
+
 .right-panel {
     background: var(--panel-bg);
     border-left: 1px solid #333;
     padding: 20px;
+    
+    /* CONFIGURACIÓN FLEXBOX PARA SCROLL */
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100%;       /* Ocupa toda la altura disponible */
+    overflow: hidden;   /* IMPORTANTE: Evita que el panel crezca infinitamente */
+    
     backdrop-filter: blur(10px);
 }
 
-/* Header dentro del panel */
 .winners-header {
+    /* Mantenemos tu estilo original del header */
     display: flex;
-    flex-direction: column; /* Apilar uno sobre otro */
-    align-items: center;    /* Centrar horizontalmente */
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    gap: 15px;              /* Espacio entre el contador y el texto */
-    
-    /* Mantenemos la línea divisoria abajo */
+    gap: 15px;
     border-bottom: 1px solid rgba(255, 102, 0, 0.3);
     padding-bottom: 20px;
     margin-bottom: 20px;
+    flex-shrink: 0; /* Evita que el header se aplaste al hacer scroll */
 }
 
-/* 2. Estilo del Texto "GANADORES" */
+/* Header Texto */
 .winners-header h3 {
     text-align: center;
     font-size: 16px;
     letter-spacing: 3px;
-    color: #D4AF37; /* Dorado */
+    color: #D4AF37;
     text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
     margin: 0;
+}
+
+.winners-list {
+    flex: 1;            /* Toma el espacio restante */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: gap 0.4s ease;
+    
+    /* LA MAGIA DEL SCROLL */
+    overflow-y: auto;   /* Activa barra de desplazamiento si hace falta */
+    min-height: 0;      /* CRUCIAL: Permite que el scroll funcione en Flexbox */
+    padding-right: 5px; /* Espacio para el scroll */
+}
+
+/* Tarjeta animada */
+.winner-card {
+    background: #222;
+    padding: 12px 10px;
+    border-radius: 6px;
+    border-left: 3px solid var(--corven-gold);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.35);
+    animation: slideIn 0.4s ease;
+    flex-shrink: 0; /* Evita que las tarjetas se aplasten */
+}
+
+.trophy-icon {
+    color: var(--corven-gold);
+    font-size: 16px;
+}
+
+.w-name {
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.empty-state {
+    color: #777;
+    text-align: center;
+    margin-top: 50px;
+    font-style: italic;
+}
+
+/* Botón para exportar PDF */
+.btn-export {
+    margin-top: 15px;
+    background: transparent;
+    border: 1px solid #555;
+    color: #aaa;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.3s;
+    flex-shrink: 0; /* Asegura que el botón no desaparezca */
+}
+
+.btn-export:hover {
+    border-color: var(--text-white);
+    color: var(--text-white);
+    background: rgba(255,255,255,0.05);
 }
 
 /* ============================================
@@ -1606,4 +1680,88 @@ main.app-layout {
     .trophy-icon {
         font-size: 14px !important;
     }
+}
+
+/* ============================================
+   ESTILOS PARA EL INPUT DE CANTIDAD
+   ============================================ */
+.qty-input {
+    background: #111;
+    border: 2px solid var(--corven-gold);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px;
+    width: 80px;
+    text-align: center;
+    border-radius: 10px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.qty-input:focus {
+    background: #222;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+
+/* ============================================
+   ESTILOS PARA EL INPUT DE CANTIDAD Y MODAL
+   ============================================ */
+/* ... tus estilos de .qty-input ... */
+
+/* Estilo para el contenedor de la lista de múltiples ganadores */
+#multiWinnersList {
+    /* **ESTO ES LO IMPORTANTE** */
+    max-height: 400px; /* Limita la altura de la lista a 400 píxeles */
+    overflow-y: auto;  /* Agrega la barra de desplazamiento si excede 400px */
+    
+    /* El resto de estilos para que se vea bien */
+    text-align: left; 
+    background: #111; 
+    padding: 15px; 
+    border: 1px solid #333; 
+    border-radius: 8px; 
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+/* Estilo para cada item de la lista de múltiples ganadores */
+.multi-winner-item {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    color: #fff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.multi-winner-item:last-child {
+    border-bottom: none;
+}
+.multi-winner-number {
+    color: var(--corven-orange);
+    font-weight: bold;
+    width: 30px;
+}
+
+/* =========================================================
+   MODO COMPACTO (Para cuando hay muchos ganadores)
+   ========================================================= */
+.winners-list.compact-mode {
+    gap: 4px; /* Menos espacio entre tarjetas */
+}
+
+.winners-list.compact-mode .winner-card {
+    padding: 6px 8px !important;   /* Tarjetas más finas */
+    min-height: 30px !important;   
+    border-left-width: 3px !important;
+}
+
+.winners-list.compact-mode .w-name {
+    font-size: 12px !important;    /* Texto más chico */
+}
+
+.winners-list.compact-mode .trophy-icon {
+    font-size: 12px !important;
 }

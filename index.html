@@ -105,7 +105,15 @@
 
         </div>
 
-        <button onclick="sortear()" class="btn-sortear sortear-below">🎯 Sortear</button>
+        <div class="sorteo-actions" style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 20px;">
+            
+            <div class="qty-wrapper" style="display: flex; align-items: center; gap: 10px;">
+                <label style="color: #D4AF37; font-weight: bold; text-transform: uppercase;">Cant. Ganadores:</label>
+                <input type="number" id="winnerQty" value="1" min="1" max="100" class="qty-input">
+            </div>
+
+            <button onclick="checkSorteoType()" class="btn-sortear">🎯 Sortear</button>
+        </div>
 
         </section>
 
@@ -128,7 +136,15 @@
                 <div class="empty-state">Esperando ganador...</div>
             </div>
 
-            <button class="btn-export" onclick="exportPDF()">🖨️ Exportar PDF</button>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; width: 100%;">
+                
+                <button class="btn-export" style="background: #222; border: 1px solid var(--corven-gold); color: var(--corven-gold);" onclick="archiveCurrentBatch()">
+                    💾 Guardar Grupo y Limpiar
+                </button>
+
+                <button class="btn-export" onclick="exportPDF()">🖨️ Exportar PDF Completo</button>
+            </div>
+        </section>
         </section>
 
     </main>
@@ -189,6 +205,28 @@
 
             <div class="modal-actions" style="margin-top: 20px;">
                 <button onclick="closeParticipantsModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="multiWinnerModal" class="modal">
+        <div class="modal-content" style="max-width: 700px; width: 90%;">
+            <h2 style="color: var(--corven-gold);">🏆 GANADORES SELECCIONADOS</h2>
+            
+            <ul id="multiWinnersList" style="
+                max-height: 400px; 
+                overflow-y: auto; 
+                text-align: left; 
+                background: #111; 
+                padding: 15px; 
+                border: 1px solid #333; 
+                border-radius: 8px; 
+                list-style: none;
+                margin-bottom: 20px;">
+            </ul>
+
+            <div class="modal-actions">
+                <button onclick="closeMultiWinnerModal()">Aceptar y Cerrar</button>
             </div>
         </div>
     </div>

@@ -5,8 +5,10 @@
 /* ======== VARIABLES GLOBALES ======== */
 let participants = [];
 let winners = [];
+let raffleHistory = []; // <--- AGREGAR ESTA LÍNEA (Aquí guardaremos los grupos)
 let freezeOdometer = false;
-let isResultAnimating = false; // <--- AGREGA ESTA VARIABLE NUEVA
+let isResultAnimating = false;
+
 
 let odometers = [
     { reel: null, current: 0, speed: 0.5, spinning: true },
@@ -799,9 +801,47 @@ function closeDupeModal() {
     document.getElementById("dupeModal").style.display = "none";
 }
 
+/* ============================================================
+   NUEVA FUNCIÓN: GESTIÓN DE GRUPOS / RONDAS
+   ============================================================ */
+function archiveCurrentBatch() {
+    // 1. Validar que haya ganadores en pantalla
+    if (winners.length === 0) {
+        alert("⚠ No hay ganadores en la lista actual para guardar.");
+        return;
+    }
+
+    // 2. Pedir nombre del grupo (Ej: "Televisores", "Motos")
+    const groupName = prompt("Ingresa un nombre para este grupo (ej: 'Televisores'):", `Grupo ${raffleHistory.length + 1}`);
+    
+    if (!groupName) return; // Si cancela, no hacemos nada
+
+    // 3. Guardar en el Historial (Hacemos una copia [...winners] para no perder datos)
+    raffleHistory.push({
+        title: groupName,
+        list: [...winners]
+    });
+
+    // 4. Limpiar la lista VISUAL (Winners) pero MANTENER los Participantes
+    winners = []; 
+    
+    // 5. Resetear contadores visuales de ganadores
+    updateWinnersCounter();
+    
+    // 6. Limpiar el HTML de la lista lateral
+    const list = document.getElementById("winnersList");
+    list.innerHTML = '<div class="empty-state" style="color: var(--corven-gold)">✔ Grupo guardado. Listo para el siguiente.</div>';
+    list.classList.remove("compact-mode");
+
+    // Pequeño feedback
+    // (Opcional) Si quieres un alert visual
+    // alert(`✔ Se guardó el grupo "${groupName}". Ahora puedes sortear el siguiente premio.`);
+}
+
 
 /* ============================================================
-   12) EXPORTAR PDF
+   MODIFICACIÓN: EXPORTAR PDF CON GRUPOS
+   (Reemplaza tu función exportPDF actual por esta)
    ============================================================ */
 function exportPDF() {
     if (typeof window.jspdf === "undefined") {
@@ -811,18 +851,190 @@ function exportPDF() {
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+    
+    const pageHeight = doc.internal.pageSize.height;
+    const marginBottom = 20;
+    let y = 20; // Cursor vertical
 
-    doc.setFontSize(22);
-    doc.setTextColor(255, 102, 0);
-    doc.text("Ganadores Sorteo Corven", 10, 20);
+    // --- Función para escribir el encabezado ---
+    const printHeader = () => {
+        doc.setFontSize(22);
+        doc.setTextColor(255, 102, 0); // Naranja
+        doc.text("Reporte de Sorteos Corven", 10, 20);
+        
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Fecha: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 10, 28);
+        y = 40; 
+    };
 
-    let y = 40;
-    winners.forEach((w, i) => {
-        doc.setFontSize(14);
-        doc.setTextColor(0, 0, 0);
-        doc.text(`${i + 1}. ${w}`, 10, y);
-        y += 10;
+    // Imprimimos cabecera inicial
+    printHeader();
+
+    // --- 1. PREPARAMOS LOS DATOS ---
+    // Unimos el historial guardado + lo que haya en pantalla actualmente (si te olvidaste de guardar el último)
+    let allGroupsToPrint = [...raffleHistory];
+
+    if (winners.length > 0) {
+        allGroupsToPrint.push({
+            title: "Otros Ganadores (Sin agrupar)",
+            list: [...winners]
+        });
+    }
+
+    if (allGroupsToPrint.length === 0) {
+        alert("No hay ganadores para exportar.");
+        return;
+    }
+
+    // --- 2. BUCLE POR GRUPOS ---
+    allGroupsToPrint.forEach((group) => {
+        
+        // Verificar si cabe el TÍTULO del grupo (dejamos 30mm de espacio)
+        if (y > pageHeight - 30) { 
+            doc.addPage(); 
+            printHeader(); 
+        }
+
+        // Escribir Título del Grupo
+        doc.setFontSize(16);
+        doc.setTextColor(0, 0, 0); 
+        doc.setFont(undefined, 'bold'); 
+        doc.text(`📂 ${group.title} (${group.list.length})`, 10, y);
+        y += 10; 
+
+        // Configurar fuente para la lista de nombres
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'normal');
+
+        // Bucle por NOMBRES dentro del grupo
+        group.list.forEach((name, i) => {
+            // Verificar fin de página para los nombres
+            if (y > pageHeight - marginBottom) {
+                doc.addPage();
+                y = 20; // Reseteamos arriba
+                // Opcional: repetir título del grupo si corta justo
+            }
+
+            doc.text(`   ${i + 1}. ${name}`, 10, y); 
+            y += 7; // Renglón
+        });
+
+        y += 10; // Espacio extra entre grupos
     });
 
-    doc.save("ganadores_corven.pdf");
+    doc.save("Reporte_Grupal_Corven.pdf");
+}
+
+/* ============================================================
+   MODIFICACIÓN: LIMPIAR TODO (Incluyendo Historial)
+   (Reemplaza tu función clearList actual por esta)
+   ============================================================ */
+function clearList() {
+    if (confirm("⚠ ATENCIÓN: Esto borrará los participantes, los ganadores Y EL HISTORIAL DE GRUPOS.\n\n¿Deseas reiniciar el sistema a cero?")) {
+        
+        // 1. Limpieza total
+        participants = [];
+        winners = [];
+        raffleHistory = []; // <--- IMPORTANTE: Borramos el historial
+
+        // 2. Visuales
+        updateCounter();
+        updateWinnersCounter();
+        updateOdometerList(); 
+
+        const list = document.getElementById("winnersList");
+        if (list) {
+            list.classList.remove("compact-mode");
+            list.innerHTML = '<div class="empty-state">Esperando ganador...</div>';
+        }
+        
+        alert("✔ Sistema reiniciado completamente.");
+    }
+}
+
+
+/* ============================================================
+   NUEVA LÓGICA DE SELECCIÓN DE SORTEO
+   ============================================================ */
+function checkSorteoType() {
+    const qtyInput = document.getElementById("winnerQty");
+    const qty = parseInt(qtyInput.value) || 1;
+
+    // Validación básica
+    if (participants.length < qty) {
+        alert(`⚠ No hay suficientes participantes. Tienes ${participants.length} y quieres sacar ${qty}.`);
+        return;
+    }
+
+    if (qty === 1) {
+        // Si es 1, usamos tu animación ORIGINAL de Odómetro
+        sortear();
+    } else {
+        // Si son varios, usamos el nuevo sorteo MÚLTIPLE
+        sortearMultiples(qty);
+    }
+}
+
+function sortearMultiples(quantity) {
+    // === YA NO HAY CONFIRMACIÓN, EJECUTA DIRECTO ===
+
+    const currentBatchWinners = [];
+
+    // Lanzar confetti (opcional)
+    if (typeof confetti === "function") {
+        confetti({ particleCount: 200, spread: 150, zIndex: 9999 });
+    }
+
+    // Seleccionar ganadores
+    for (let i = 0; i < quantity; i++) {
+        // Elegir índice al azar
+        const randomIndex = Math.floor(Math.random() * participants.length);
+        const winnerName = participants[randomIndex];
+
+        // 1. Lo sacamos de participantes
+        participants.splice(randomIndex, 1);
+
+        // 2. Lo agregamos a ganadores globales y al lote actual
+        winners.push(winnerName);
+        currentBatchWinners.push(winnerName);
+
+        // 3. Agregamos a la lista lateral derecha (visual)
+        addWinnerCard(winnerName);
+    }
+
+    // Actualizar contadores visuales
+    updateCounter();          // Odómetro de participantes (resta los que salieron)
+    updateWinnersCounter();   // Contador de ganadores (suma los nuevos)
+    updateOdometerList();     // Refresca la cinta de nombres para el próximo tiro
+
+    // Ajustar tamaño de tarjetas si son muchas (Importante para que no se rompa el diseño)
+    autoResizeWinners();
+
+    // Mostrar el Modal con la lista
+    showMultiWinnerModal(currentBatchWinners);
+}
+
+function showMultiWinnerModal(winnersList) {
+    const modal = document.getElementById("multiWinnerModal");
+    const listContainer = document.getElementById("multiWinnersList");
+    
+    listContainer.innerHTML = ""; // Limpiar lista anterior
+
+    winnersList.forEach((name, index) => {
+        const li = document.createElement("li");
+        li.className = "multi-winner-item";
+        
+        // Limpiamos el nombre para quitar el CUIL si lo tiene, para que se vea más lindo
+        const cleanName = name.split('(')[0].trim();
+
+        li.innerHTML = `<span class="multi-winner-number">#${index + 1}</span> ${cleanName}`;
+        listContainer.appendChild(li);
+    });
+
+    modal.style.display = "flex";
+}
+
+function closeMultiWinnerModal() {
+    document.getElementById("multiWinnerModal").style.display = "none";
 }
