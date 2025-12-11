@@ -4,7 +4,7 @@
 
 1. [Descripción General](#-descripción-general)
 2. [Guía de Uso e Interfaz](#-guía-de-uso-e-interfaz)
-3. [Auditoría y Transparencia Algorítmica](#-auditoría-y-transparencia-algorítmica)
+3. [NUEVO: Gestión de Tandas y Categorías](#-Gestion-de-Tandas)
 4. [Lógica de Probabilidades](#-lógica-de-probabilidades)
 5. [Experiencia Visual y Animaciones](#-experiencia-visual-y-animaciones)
 6. [Tecnologías Utilizadas](#-tecnologías-utilizadas)
@@ -32,12 +32,17 @@ A continuación se detalla la funcionalidad de cada control disponible en la int
 * `📋 VER LISTA`: Abre un **Modal de Auditoría** con buscador en tiempo real, permitiendo verificar la existencia de cualquier participante cargado antes del sorteo.
 
 ### 2. Panel Central (El Juego)
-* **Contador de Participantes:** Panel digital estilo neón que muestra el total de registros habilitados.
-* **Indicador de Probabilidad:** Muestra en tiempo real la chance matemática que tiene cada participante de ganar (Ej: *0.09091% - 1 en 1100*).
-* **Odómetros (Slot Machine):** Tres columnas giratorias con física simulada.
-    * *Izquierda y Derecha:* Giran hacia arriba.
-    * *Centro:* Gira hacia abajo (**Efecto Inverso**) para mayor dinamismo visual.
-* `🎯 SORTEAR`: Gatilla el algoritmo de selección aleatoria, inicia la animación de frenado progresivo (8 segundos) y lanza los efectos de celebración (Confeti y Modal).
+* **Contador de Ganadores** : Visualizador digital de premios entregados en la tanda actual.
+
+* **Lista Dinámica:** Tarjetas con los ganadores. Modo Compacto Automático: Si la lista supera los 8 ganadores, las tarjetas se achican para mejorar la visibilidad.
+
+* **💾 GUARDAR GRUPO Y LIMPIAR:** (Nueva Función) Archiva los ganadores actuales en memoria bajo un nombre personalizado (Ej: "Lote Televisores") y limpia la pantalla para comenzar el siguiente sorteo sin perder los datos.
+
+* **🖨️ EXPORTAR PDF:** Genera el reporte final.
+
+Paginación Automática: Detecta el fin de la hoja A4 y crea nuevas páginas.
+
+Agrupación: Imprime primero el historial de grupos guardados (con sus títulos) y luego los ganadores actuales en pantalla.
 
 ### 3. Panel Lateral (Ganadores)
 * **Contador de Ganadores:** Visualizador digital de premios entregados.
@@ -45,6 +50,24 @@ A continuación se detalla la funcionalidad de cada control disponible en la int
 * `🖨️ EXPORTAR PDF`: Genera un documento oficial con la lista numerada de ganadores, incluyendo sus datos completos (**Nombre + CUIL**) para el acta notarial.
 
 ---
+
+## 📦 NUEVO: Gestión de Tandas y Categorías
+
+El sistema ahora soporta un flujo de trabajo para eventos con múltiples premios:
+
+Sorteo Tanda 1: Se seleccionan, por ejemplo, 15 ganadores para "Premios Menores".
+
+Archivado: Se presiona 💾 Guardar Grupo. El sistema pide un nombre (Ej: "Vouchers de Compra").
+
+Limpieza Automática: La lista visual se vacía, pero los ganadores quedan guardados en memoria.
+
+Sorteo Tanda 2: Se sortean los premios mayores (Ej: 2 ganadores).
+
+Reporte Final: Al presionar 🖨️ Exportar PDF, el documento tendrá este formato:
+
+📂 Vouchers de Compra (15) 1. Juan Perez... 2. Maria Gomez...
+
+📂 Premios Mayores (2) 1. Roberto Diaz...
 
 ## 🔍 Auditoría y Transparencia Algorítmica
 
